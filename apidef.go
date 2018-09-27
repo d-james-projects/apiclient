@@ -18,8 +18,3 @@ type Content struct {
 	To     string     `json:"to"`
 	GenMix []*FuelMix `json:"generationmix"`
 }
-
-type FuelMix struct {
-	Fuel string  `json:"fuel"`
-	Perc float32 `json:"perc"`
-}
