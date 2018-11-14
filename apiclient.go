@@ -112,11 +112,6 @@ func (c *Client) do(req *http.Request, v interface{}) (*http.Response, error) {
 	copyBuf.ReadFrom(tee)
 	respStr := copyBuf.String()
 	//fmt.Printf(respStr)
-	//b, err := json.MarshalIndent(copyBuf, "", "  ")
-	//if err != nil {
-	//	fmt.Println("error:", err)
-	//}
-	//os.Stdout.Write(b)
 
 	// more than 1 data field then replace the 1st one with datatop
 	var newStr string
@@ -128,14 +123,9 @@ func (c *Client) do(req *http.Request, v interface{}) (*http.Response, error) {
 	//fmt.Println(newStr)
 
 	tee = bytes.NewReader([]byte(newStr))
-	//b, err := json.MarshalIndent(tee, "", "  ")
-	//if err != nil {
-	//	fmt.Println("error:", err)
-	//}
-	//os.Stdout.Write(b)
 
-	content, _ := ioutil.ReadAll(tee)
-	fmt.Println(string(content))
+	//content, _ := ioutil.ReadAll(tee)
+	//fmt.Println(string(content))
 
 	err = json.NewDecoder(tee).Decode(v)
 	return resp, err
