@@ -26,7 +26,7 @@ type ContentUK struct {
 }
 
 type GetRespRegional struct {
-	Datatop []*ContentRegion
+	Datatop []*ContentRegion `json:"datatop"`
 }
 
 type ContentRegion struct {

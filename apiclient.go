@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	//"io/ioutil"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -56,6 +56,20 @@ func (c *Client) GetCurrentRegion(ctx context.Context, regionid string) (*GetRes
 	return &getRegionalFuelMixResult, err
 }
 
+func (c *Client) GetRegion24(ctx context.Context, regionid string, start24 string) (*GetRespRegional, error) {
+	req, err := c.newRequest(ctx, "GET",
+		"/regional/intensity/"+strings.Trim(start24, " ")+
+			"/pt24h/regionid/"+strings.Trim(regionid, " "),
+		nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var getRegional24FuelMixResult GetRespRegional
+	_, err = c.do(req, &getRegional24FuelMixResult)
+	return &getRegional24FuelMixResult, err
+}
+
 func (c *Client) newRequest(ctx context.Context, method string, path string, body interface{}) (*http.Request, error) {
 	rel := &url.URL{Path: path}
 	u := c.BaseURL.ResolveReference(rel)
@@ -98,6 +112,11 @@ func (c *Client) do(req *http.Request, v interface{}) (*http.Response, error) {
 	copyBuf.ReadFrom(tee)
 	respStr := copyBuf.String()
 	//fmt.Printf(respStr)
+	//b, err := json.MarshalIndent(copyBuf, "", "  ")
+	//if err != nil {
+	//	fmt.Println("error:", err)
+	//}
+	//os.Stdout.Write(b)
 
 	// more than 1 data field then replace the 1st one with datatop
 	var newStr string
@@ -109,9 +128,14 @@ func (c *Client) do(req *http.Request, v interface{}) (*http.Response, error) {
 	//fmt.Println(newStr)
 
 	tee = bytes.NewReader([]byte(newStr))
+	//b, err := json.MarshalIndent(tee, "", "  ")
+	//if err != nil {
+	//	fmt.Println("error:", err)
+	//}
+	//os.Stdout.Write(b)
 
-	//content, _ := ioutil.ReadAll(tee)
-	//fmt.Println(string(content))
+	content, _ := ioutil.ReadAll(tee)
+	fmt.Println(string(content))
 
 	err = json.NewDecoder(tee).Decode(v)
 	return resp, err
