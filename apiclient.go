@@ -6,31 +6,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
 )
-
-// func GetCurrentUK() (*GetResp, error) {
-// 	client := http.Client{}
-// 	request, err := http.NewRequest("GET", CarbonIntensityURL, nil)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	resp, err := client.Do(request)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	defer resp.Body.Close()
-
-// 	var getFuelMixResult GetResp
-// 	if err := json.NewDecoder(resp.Body).Decode(&getFuelMixResult); err != nil {
-// 		return nil, err
-// 	}
-// 	return &getFuelMixResult, nil
-// }
 
 func (c *Client) GetCurrentUK(ctx context.Context) (*GetRespUK, error) {
 	req, err := c.newRequest(ctx, "GET", "/generation", nil)
@@ -56,7 +35,7 @@ func (c *Client) GetCurrentRegion(ctx context.Context, regionid string) (*GetRes
 	return &getRegionalFuelMixResult, err
 }
 
-func (c *Client) GetRegion24(ctx context.Context, regionid string, start24 string) (*GetRespRegional, error) {
+func (c *Client) GetRegion24(ctx context.Context, regionid string, start24 string) (*GetResp24Regional, error) {
 	req, err := c.newRequest(ctx, "GET",
 		"/regional/intensity/"+strings.Trim(start24, " ")+
 			"/pt24h/regionid/"+strings.Trim(regionid, " "),
@@ -65,7 +44,7 @@ func (c *Client) GetRegion24(ctx context.Context, regionid string, start24 strin
 		return nil, err
 	}
 
-	var getRegional24FuelMixResult GetRespRegional
+	var getRegional24FuelMixResult GetResp24Regional
 	_, err = c.do(req, &getRegional24FuelMixResult)
 	return &getRegional24FuelMixResult, err
 }
@@ -111,21 +90,15 @@ func (c *Client) do(req *http.Request, v interface{}) (*http.Response, error) {
 	copyBuf := new(bytes.Buffer)
 	copyBuf.ReadFrom(tee)
 	respStr := copyBuf.String()
-	//fmt.Printf(respStr)
 
-	// more than 1 data field then replace the 1st one with datatop
 	var newStr string
 	if strings.Count(respStr, KeyReplace) > 1 {
 		newStr = strings.Replace(respStr, KeyReplace, KeyNew, 1)
 	} else {
 		newStr = respStr
 	}
-	//fmt.Println(newStr)
 
 	tee = bytes.NewReader([]byte(newStr))
-
-	//content, _ := ioutil.ReadAll(tee)
-	//fmt.Println(string(content))
 
 	err = json.NewDecoder(tee).Decode(v)
 	return resp, err

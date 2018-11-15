@@ -19,14 +19,29 @@ type GetRespUK struct {
 	Data ContentUK
 }
 
+type GetRespRegional struct {
+	Datatop []*ContentRegion `json:"datatop"`
+}
+
+type GetResp24Regional struct {
+	Datatop Content24Region `json:"datatop"`
+}
+
+type Content24Region struct {
+	RegionID  int          `json:"regionid"`
+	Shortname string       `json:"shortname"`
+	Data      []*ContentUK `json:"data"`
+}
+
+type Forecast struct {
+	Fcast string `json:"forecast"`
+	Idx   string `json:"index"`
+}
+
 type ContentUK struct {
 	From   string     `json:"from"`
 	To     string     `json:"to"`
 	GenMix []*FuelMix `json:"generationmix"`
-}
-
-type GetRespRegional struct {
-	Datatop []*ContentRegion `json:"datatop"`
 }
 
 type ContentRegion struct {
@@ -36,6 +51,6 @@ type ContentRegion struct {
 }
 
 type FuelMix struct {
-	Fuel string
-	Perc float32
+	Fuel string  `json:"fuel"`
+	Perc float32 `json:"perc"`
 }
