@@ -6,10 +6,22 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
 )
+
+func NewClient() *Client {
+	doer := http.DefaultClient
+	baseURL, err := url.Parse(CarbonIntensityBaseURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	client := &Client{httpClient: doer, BaseURL: baseURL, UserAgent: userAgent}
+	return client
+}
 
 func (c *Client) GetCurrentUK(ctx context.Context) (*GetRespUK, error) {
 	req, err := c.newRequest(ctx, "GET", "/generation", nil)

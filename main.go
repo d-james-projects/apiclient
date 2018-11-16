@@ -4,24 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net/http"
-	"net/url"
 )
 
 func main() {
-	u, err := url.Parse(CarbonIntensityBaseURL)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("Interrogating URL at: ")
-	fmt.Println(u)
-	client := http.Client{}
-
-	apiClient := &Client{
-		BaseURL: u,
-	}
-	//	apiClient.BaseURL = u
-	apiClient.httpClient = &client
+	apiClient := NewClient()
 
 	r1, err := apiClient.GetCurrentUK(context.Background())
 	if err != nil {

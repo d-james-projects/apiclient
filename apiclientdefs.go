@@ -8,6 +8,7 @@ import (
 const CarbonIntensityBaseURL = "https://api.carbonintensity.org.uk"
 const KeyReplace = "\"data\""
 const KeyNew = "\"datatop\""
+const userAgent = "apiclient"
 
 type Client struct {
 	BaseURL    *url.URL
